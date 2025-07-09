@@ -1,28 +1,55 @@
-import Icon from "./components/UI/Icon/Icon";
-import Input from "./components/UI/Input/Input";
-import Text from "./components/UI/Text/Text";
+import { useState } from "react";
+import Action from "./components/Action/Action";
+import BookList from "./components/Book/BookList/BookList";
+import Footer from "./components/Footer/Footer";
+import Header from "./components/Header/Header";
+import { data } from "./database/data";
 
 function App() {
+  const [searchByUser, setSearchByUser] = useState("");
+  const [books, setBooks] = useState(structuredClone(data));
+
+  function handleSearch() {
+    return function (e) {
+      setSearchByUser(e.target.value);
+    };
+  }
+
+  function handleFav(id) {
+    const newBooks = books.map(function (book) {
+      if (book.id !== id) return book;
+
+      return {
+        ...book,
+        isFav: !book.isFav,
+      };
+    });
+
+    setBooks(newBooks);
+  }
+
+  /*  const filterByBook = data.filter((book) => {
+    if (searchByUser === "") return true;
+
+    // if (book.title.toLowerCase().includes(searchByUser.toLowerCase())) {
+    //   return true;
+    // } else {
+    //   return false;
+    // }
+
+    return book.title.toLowerCase().includes(searchByUser.toLowerCase());
+  }); */
+
   return (
-    <div>
-      <Text
-        as="h2"
-        variant={Text.variantTypes.HEADING}
-        className="bg-amber-400 uppercase"
-        style={{ textDecoration: "underline" }}
-        id="sumon"
-      >
-        hello test
-      </Text>
-
-      <Input
-        type="search"
-        placeholder="enter your textssssssssssssss"
-        variant={Input.variantTypes.SEARCH}
+    <div className=" min-h-[500px] w-3/4 mx-auto mt-5">
+      <Header />
+      <Action searchByUser={searchByUser} onChange={handleSearch} />
+      <BookList
+        data={books}
+        searchByUser={searchByUser}
+        handleFav={handleFav}
       />
-
-      <Icon variant={Icon.variantTypes.STAR_FILL} />
-      <Icon variant={Icon.variantTypes.STAR_HALF} />
+      <Footer />
     </div>
   );
 }
